@@ -1,0 +1,22 @@
+j2x.go - Encode arbitrary JSON strings or map[string]interface{} values as XML.
+
+MOTIVATION
+
+As part of our message hub project we want to make XML documents first class members
+and had written the x2j package (http://godoc.org/github.com/clbanning/x2j) to parse
+and filter XML encoded messages.  This package allows filtered messages to be delivered
+as XML docs even if they are published to the hub as JSON encoded messages.
+
+USAGE
+
+The package is fairly well self-documented. (http://godoc.org/github.com/clbanning/j2x)  
+
+XML ENCODING CONVENTIONS
+
+   - JSON and map[string]interface{} keys that are prefixed with a hyphen, '-',
+     are treated as attributes.
+   - The value for the key '#text' is treated as the value for a simple element.
+	- map[string]interface{} member values that are not standard JSON types - numbers,
+	  character strings, boolean values, lists and JSON strings - are marshal'd using
+	  xml.Marshal.  Thus, values can be complex structures, etc.
+
