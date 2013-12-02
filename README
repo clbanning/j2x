@@ -16,7 +16,7 @@ XML ENCODING CONVENTIONS
    - JSON and map[string]interface{} keys that are prefixed with a hyphen, '-',
      are treated as attributes.
    - The value for the key '#text' is treated as the value for a simple element.
-	- map[string]interface{} member values that are not standard JSON types - numbers,
+   - map[string]interface{} member values that are not standard JSON types - numbers,
 	  character strings, boolean values, lists and JSON strings - are marshal'd using
 	  xml.Marshal.  Thus, values can be complex structures, etc.
 
