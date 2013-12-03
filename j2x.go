@@ -12,14 +12,17 @@
 		- The "#text" key is treated as the value for a simple element.
 
 	Map values that are not standard JSON types - can be a structure, etc. - are marshal'd using xml.Marshal().
+	However, attribute keys are restricted to string, numeric, or boolean types.
 
-	There are numerous examples in j2x_test.go.
+	If the map[string]interface{} has a single key, it is used as the XML root tag.  If it doesn't have
+	a single key, then a root tag - rootTag - must be provided or the default root tag value is used.
 */
 package j2x
 
 import (
 	"encoding/json"
 	"encoding/xml"
+	"errors"
 	"fmt"
 )
 
@@ -38,8 +41,8 @@ func Marshal(v interface{}, rootTag ...string) ([]byte, error) {
 		xmlString, err := JsonToDoc(v.(string), rootTag...)
 		return []byte(xmlString), err
 	case map[string]interface{}:
-		xmlString := MapToDoc(v.(map[string]interface{}), rootTag...)
-		return []byte(xmlString), nil
+		xmlString, err := MapToDoc(v.(map[string]interface{}), rootTag...)
+		return []byte(xmlString), err
 	}
 	return xml.Marshal(v)
 }
@@ -51,13 +54,14 @@ func JsonToDoc(jsonString string, rootTag ...string) (string, error) {
 	if err := json.Unmarshal([]byte(jsonString), &m); err != nil {
 		return "", err
 	}
-	return MapToDoc(m, rootTag...), nil
+	return MapToDoc(m, rootTag...)
 }
 
 // Encode a map[string]interface{} variable as XML.  The inverse of x2j.DocToMap().
 // The following rules apply.
 //    - The key label "#text" is treated as the value for a simple element with attributes.
 //    - Map keys that begin with a hyphen, '-', are interpreted as attributes.
+//      It is an error if the attribute doesn't have a string, number, or boolean value.
 //    - Map value type encoding:
 //          > string, bool, float64, int, int32, int64, float32: per "%v" formating
 //          > []bool: by casting to string (which is how xml.Marshal handles such structure members)
@@ -66,29 +70,29 @@ func JsonToDoc(jsonString string, rootTag ...string) (string, error) {
 //    - Elements with only attribute values or are null are terminated using "/>".
 //    - If len(m) == 1 and no rootTag is provided, then the map key is used as the root tag.
 //      Thus, `{ "key":"value" }` encodes as `<key>value</key>`.
-func MapToDoc(m map[string]interface{}, rootTag ...string) string {
+func MapToDoc(m map[string]interface{}, rootTag ...string) (string, error) {
+	var err error
 	s := new(string)
 
 	if len(m) == 1 && len(rootTag) == 0 {
 		for key, value := range m {
 			if _, ok := value.([]interface{}); ok {
-				mapToDoc(s, DefaultRootTag, m)
+				err = mapToDoc(s, DefaultRootTag, m)
 			} else {
-				mapToDoc(s, key, value)
+				err = mapToDoc(s, key, value)
 			}
 		}
-		return *s
 	} else if len(rootTag) == 1 {
-		mapToDoc(s, rootTag[0], m)
-		return *s
+		err = mapToDoc(s, rootTag[0], m)
+	} else {
+		err = mapToDoc(s, DefaultRootTag, m)
 	}
-	mapToDoc(s, DefaultRootTag, m)
-	return *s
+	return *s, err
 }
 
 // where the work actually happens
-// no errors - we coerce everything using "%v"
-func mapToDoc(s *string, key string, value interface{}) {
+// returns an error if an attribute is not atomic
+func mapToDoc(s *string, key string, value interface{}) error {
 	var endTag bool
 	var isList bool
 
@@ -102,8 +106,13 @@ func mapToDoc(s *string, key string, value interface{}) {
 		var cntAttr int
 		for k, v := range vv {
 			if k[:1] == "-" {
-				*s += ` ` + k[1:] + `="` + fmt.Sprintf("%v", v) + `"`
-				cntAttr++
+				switch v.(type) {
+				case string, float64, bool, int, int32, int64, float32:
+					*s += ` ` + k[1:] + `="` + fmt.Sprintf("%v", v) + `"`
+					cntAttr++
+				default:
+					return errors.New("invalid attribute value for: "+k)
+				}
 			}
 		}
 		// only attributes?
@@ -137,7 +146,7 @@ func mapToDoc(s *string, key string, value interface{}) {
 	default: // handle anything - even goofy stuff
 		var tmp string
 		switch value.(type) {
-		case float64, string, bool, int, int32, int64, float32:
+		case string, float64, bool, int, int32, int64, float32:
 			tmp = fmt.Sprintf("%v", value)
 		case []byte:
 			// similar to how xml.Marshal handles []byte structure members
@@ -155,12 +164,13 @@ func mapToDoc(s *string, key string, value interface{}) {
 	}
 
 	if isList {
-		return
+		return nil
 	}
 	if endTag {
 		*s += "</" + key + ">"
 	} else {
 		*s += "/>"
 	}
+	return nil
 }
 

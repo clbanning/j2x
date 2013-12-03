@@ -63,6 +63,15 @@ func TestAttr(t *testing.T) {
 	}
 	fmt.Println("v:",v)
 
+	s = `{ "json":{ "-one":1, "-pi":3.1415962535, "-bool":true, "-jsonJR":{ "-key":"value" } } }`
+
+	fmt.Println("\nTestAttr ... Bad Attribute Value:",s)
+	v, err = JsonToDoc(s)
+	if err != nil {
+		fmt.Println("err:",err.Error())
+	}
+	fmt.Println("v:",v)
+
 	s = `{ "json":[ "one", 3.1415962535, true, { "-key":"value" } ] }`
 
 	fmt.Println("\nTestAttr ... JsonToDoc:",s)
@@ -101,7 +110,7 @@ func TestGoofy(t *testing.T) {
 	m["nilVal"] = interface{}(nil)
 
 	fmt.Println("\nTestGoofy ... MapToDoc:",m)
-	v := MapToDoc(m)
+	v, _ := MapToDoc(m)
 	fmt.Println("v:",v)
 
 	type goofier struct {
@@ -116,7 +125,7 @@ func TestGoofy(t *testing.T) {
 	m["goofierVal"] = interface{}(gg)
 
 	fmt.Println("\nTestGoofier ... MapToDoc:",m)
-	v = MapToDoc(m)
+	v, _ = MapToDoc(m)
 	fmt.Println("v:",v)
 }
 
