@@ -63,9 +63,9 @@ func TestAttr(t *testing.T) {
 	}
 	fmt.Println("v:",v)
 
-	s = `{ "json":{ "-one":1, "-pi":3.1415962535, "-bool":true, "-jsonJR":{ "-key":"value" } } }`
+	s = `{ "json":{ "-one":1, "-pi":3.1415962535, "-bool":true, "jsonJR":{ "-attr":"value", "#text":"value" } } }`
 
-	fmt.Println("\nTestAttr ... Bad Attribute Value:",s)
+	fmt.Println("\nTestAttr ... #test:",s)
 	v, err = JsonToDoc(s)
 	if err != nil {
 		fmt.Println("err:",err.Error())
@@ -74,7 +74,7 @@ func TestAttr(t *testing.T) {
 
 	s = `{ "json":[ "one", 3.1415962535, true, { "-key":"value" } ] }`
 
-	fmt.Println("\nTestAttr ... JsonToDoc:",s)
+	fmt.Println("\nTestAttr ... list:",s)
 	v, err = JsonToDoc(s)
 	if err != nil {
 		fmt.Println("err:",err.Error())
@@ -83,7 +83,7 @@ func TestAttr(t *testing.T) {
 
 	s = `{ "json":[ "one", 3.1415962535, true, { "-key":"value", "#text":"Now is the time..." } ] }`
 
-	fmt.Println("\nTestAttr ... JsonToDoc:",s)
+	fmt.Println("\nTestAttr ... #text:",s)
 	v, err = JsonToDoc(s)
 	if err != nil {
 		fmt.Println("err:",err.Error())
@@ -181,3 +181,21 @@ func TestMarshal(t *testing.T) {
 	fmt.Println("v:",string(v))
 }
 
+func TestSingleRootKey(t *testing.T) {
+	var s = `{ "head":[ "one", 2, true, { "key":"value" } ] }`
+
+	fmt.Println("\nTestSingleRootKey ... list :", s)
+	v, err := Marshal(s)
+	if err != nil {
+		fmt.Println("err:",err.Error())
+	}
+	fmt.Println("v:",string(v))
+
+	s = `{ "head":{ "line":[ "one", 2, true, { "key":"value" } ] } }`
+	fmt.Println("\nTestSingleRootKey ... JSON:", s)
+	v, err = Marshal(s)
+	if err != nil {
+		fmt.Println("err:",err.Error())
+	}
+	fmt.Println("v:",string(v))
+}
