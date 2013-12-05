@@ -199,3 +199,18 @@ func TestSingleRootKey(t *testing.T) {
 	}
 	fmt.Println("v:",string(v))
 }
+
+func TestBangTextError(t *testing.T) {
+	var s = `{ "-attr":"value", "#text":true }`
+
+	m := make(map[string]interface{},0)
+	_ = json.Unmarshal([]byte(s),&m)
+	m["something"] = interface{}("else")
+
+	fmt.Println("\nTestBangTextError ... map :", m)
+	v, err := Marshal(m)
+	if err != nil {
+		fmt.Println("err:",err.Error())
+	}
+	fmt.Println("v:",string(v))
+}

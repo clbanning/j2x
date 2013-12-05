@@ -101,6 +101,7 @@ func mapToDoc(s *string, key string, value interface{}) error {
 	switch value.(type) {
 	case map[string]interface{}:
 		vv := value.(map[string]interface{})
+		lenvv := len(vv)
 		// scan out attributes - keys have prepended hyphen, '-'
 		var cntAttr int
 		for k, v := range vv {
@@ -115,11 +116,14 @@ func mapToDoc(s *string, key string, value interface{}) error {
 			}
 		}
 		// only attributes?
-		if cntAttr == len(vv) {
+		if cntAttr == lenvv {
 			break
 		}
 		// simple element? Note: '#text" is an invalid XML tag.
 		if v, ok := vv["#text"]; ok {
+			if cntAttr+1 < lenvv {
+				return errors.New("#text key occurs with other non-attribute keys")
+			}
 			*s += ">" + fmt.Sprintf("%v", v)
 			endTag = true
 			break
