@@ -94,9 +94,8 @@ func MapToDoc(m map[string]interface{}, rootTag ...string) (string, error) {
 // returns an error if an attribute is not atomic
 func mapToDoc(s *string, key string, value interface{}) error {
 	var endTag bool
-	var isList bool
 
-	if _, isList = value.([]interface{}); !isList {
+	if _, ok := value.([]interface{}); !ok {
 		*s += `<` + key
 	}
 	switch value.(type) {
@@ -111,7 +110,7 @@ func mapToDoc(s *string, key string, value interface{}) error {
 					*s += ` ` + k[1:] + `="` + fmt.Sprintf("%v", v) + `"`
 					cntAttr++
 				default:
-					return errors.New("invalid attribute value for: "+k)
+					return errors.New("invalid attribute value for: " + k)
 				}
 			}
 		}
@@ -119,7 +118,7 @@ func mapToDoc(s *string, key string, value interface{}) error {
 		if cntAttr == len(vv) {
 			break
 		}
-		// simple element?
+		// simple element? Note: '#text" is an invalid XML tag.
 		if v, ok := vv["#text"]; ok {
 			*s += ">" + fmt.Sprintf("%v", v)
 			endTag = true
@@ -139,7 +138,7 @@ func mapToDoc(s *string, key string, value interface{}) error {
 		for _, v := range value.([]interface{}) {
 			mapToDoc(s, key, v)
 		}
-		endTag = true
+		return nil
 	case nil:
 		// terminate the tag
 		break
@@ -163,9 +162,6 @@ func mapToDoc(s *string, key string, value interface{}) error {
 		endTag = true
 	}
 
-	if isList {
-		return nil
-	}
 	if endTag {
 		*s += "</" + key + ">"
 	} else {
@@ -173,4 +169,3 @@ func mapToDoc(s *string, key string, value interface{}) error {
 	}
 	return nil
 }
-
