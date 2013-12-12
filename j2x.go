@@ -34,6 +34,8 @@ const (
 //	This is the inverse of x2j.Unmarshal().
 //	Strings are interpreted as JSON strings; use xml.Marshal() to marshal
 //	a string as "<string>...</string>" - the standard package handling.
+//	Follows xml.Marshal handling of types except for string and map[string]interface{}
+//	values. For more generalized marshal'ing use MapToDoc().
 //	See MapToDoc() for encoding rules.
 func Marshal(v interface{}, rootTag ...string) ([]byte, error) {
 	switch v.(type) {
@@ -64,7 +66,7 @@ func JsonToDoc(jsonString string, rootTag ...string) (string, error) {
 //      It is an error if the attribute doesn't have a string, number, or boolean value.
 //    - Map value type encoding:
 //          > string, bool, float64, int, int32, int64, float32: per "%v" formating
-//          > []bool: by casting to string (which is how xml.Marshal handles such structure members)
+//          > []bool, []uint8: by casting to string
 //          > structures, etc.: handed to xml.Marshal() - if there is an error, the element
 //            value is "UNKNOWN"
 //    - Elements with only attribute values or are null are terminated using "/>".
@@ -151,7 +153,7 @@ func mapToDoc(s *string, key string, value interface{}) error {
 		switch value.(type) {
 		case string, float64, bool, int, int32, int64, float32:
 			tmp = fmt.Sprintf("%v", value)
-		case []byte:
+		case []byte:			// NOTE: byte is just an alias for uint8
 			// similar to how xml.Marshal handles []byte structure members
 			tmp = fmt.Sprintf("%v", string(value.([]byte)))
 		default:
