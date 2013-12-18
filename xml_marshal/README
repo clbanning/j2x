@@ -1,0 +1,12 @@
+The j2x package terminates empty elements using '/>' rather than '<tag ...></tag>'.  
+
+The MapToDoc() marshals variables of type map[string]interface{} where interface{}(value) can be 
+structures or any other Go type that xml.Marshal() can encode.  If you want to have xml.Marshal()
+encode empty elements in a manner consist with j2x, then you need to hack the pkg/encoding/xml/marshal.go
+file to support that convention.
+
+The marshal.go.hacked file in this repo does that; use it in place of the standard library marshal.go file.
+
+The example_test.go.hacked file extends the package example_test.go file to provide an example of the
+SetUseNullEndTag() function as part of the godoc documentation.
+

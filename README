@@ -1,5 +1,10 @@
 j2x.go - Encode arbitrary JSON strings or map[string]interface{} values as XML.
 
+ANNOUNCEMENT - 12/18/13
+
+xml_marshal folder contains modified pkg/encoding/xml/marshal.go file that allows 
+xml.Marshal() and xml.MarshalIndent() to use the j2x empty element encoding convention.
+
 MOTIVATION
 
 As part of our message hub project we want to make XML documents first class members
