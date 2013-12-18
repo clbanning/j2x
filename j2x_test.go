@@ -214,3 +214,17 @@ func TestBangTextError(t *testing.T) {
 	}
 	fmt.Println("v:",string(v))
 }
+
+func TestByteArrayAttr(t *testing.T) {
+	var s = `now is the time`
+
+	m := make(map[string]interface{},1)
+	m["something"] = interface{}([]byte(s))
+
+	fmt.Println("\nTestByteArrayAttr ... map :", m)
+	v, err := Marshal(m)
+	if err != nil {
+		fmt.Println("err:",err.Error())
+	}
+	fmt.Println("v:",string(v))
+}

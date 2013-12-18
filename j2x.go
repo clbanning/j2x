@@ -63,7 +63,7 @@ func JsonToDoc(jsonString string, rootTag ...string) (string, error) {
 // The following rules apply.
 //    - The key label "#text" is treated as the value for a simple element with attributes.
 //    - Map keys that begin with a hyphen, '-', are interpreted as attributes.
-//      It is an error if the attribute doesn't have a string, number, or boolean value.
+//      It is an error if the attribute doesn't have a []byte, string, number, or boolean value.
 //    - Map value type encoding:
 //          > string, bool, float64, int, int32, int64, float32: per "%v" formating
 //          > []bool, []uint8: by casting to string
@@ -111,6 +111,9 @@ func mapToDoc(s *string, key string, value interface{}) error {
 				switch v.(type) {
 				case string, float64, bool, int, int32, int64, float32:
 					*s += ` ` + k[1:] + `="` + fmt.Sprintf("%v", v) + `"`
+					cntAttr++
+				case []byte:		// allow standard xml pkg []byte transform, as below
+					*s += ` ` + k[1:] + `="` + fmt.Sprintf("%v",string(v.([]byte))) + `"`
 					cntAttr++
 				default:
 					return errors.New("invalid attribute value for: " + k)
