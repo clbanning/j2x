@@ -16,6 +16,13 @@
 
 	If the map[string]interface{} has a single key, it is used as the XML root tag.  If it doesn't have
 	a single key, then a root tag - rootTag - must be provided or the default root tag value is used.
+
+	EMPTY ELEMENT ENCODING
+
+	Empty (nil) elements or elements with only attributes are encoded as "<tag .../>".  The standard library
+	encoding/xml package encodes them as "<tag ...></tag>".  If you're marshaling a map with structure values
+	and want a consistent syntax, use the xml_marshal hack of the standard library that conforms encoding/xml
+	to the j2x convention.
 */
 package j2x
 
