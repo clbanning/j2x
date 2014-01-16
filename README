@@ -1,6 +1,13 @@
 j2x.go - Encode arbitrary JSON strings or map[string]interface{} values as XML.
 
-ANNOUNCEMENT - 12/18/13
+ANNOUNCEMENTS
+
+01/16/14
+
+Included our io.Reader wrapper for bulk processing JSON strings to map[string]interface{}
+or XML string values. See: JsonReaderToMap() and JsonReaderToDoc().
+
+12/18/13
 
 xml_marshal folder contains modified pkg/encoding/xml/marshal.go file that allows 
 xml.Marshal() and xml.MarshalIndent() to use the j2x empty element encoding convention.
