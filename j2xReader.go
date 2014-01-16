@@ -7,24 +7,28 @@ import (
 	"io"
 )
 
-func JsonReaderToDoc(rdr io.Reader) (string, error) {
-	m,err := JsonReaderToMap(rdr)
+// JsonReaderToDoc implements JsonToDoc() by wrapping MapToDoc() with an io.Reader.
+// Repeated calls will bulk process the stream of anonymous JSON strings.
+func JsonReaderToDoc(rdr io.Reader, rootTag ...string) (string, error) {
+	m, err := JsonReaderToMap(rdr)
 	if err != nil {
 		return "", err
 	}
-	return MapToDoc(m)
+	return MapToDoc(m, rootTag...)
 }
 
-func JsonReaderToMap(rdr io.Reader) (map[string]interface{},error) {
-	bval := make([]byte,1)
-	jb := make([]byte,0)
+// JsonReaderToDoc wraps json.Unmarshal() with an io.Reader.
+// Repeated calls will bulk process the stream of anonymous JSON strings.
+func JsonReaderToMap(rdr io.Reader) (map[string]interface{}, error) {
+	bval := make([]byte, 1)
+	jb := make([]byte, 0)
 	var inQuote, inJson bool
 	var parenCnt int
 
 	// scan the input for a matched set of {...}
 	// json.Unmarshal will handle syntax checking.
 	for {
-		_,err := rdr.Read(bval)
+		_, err := rdr.Read(bval)
 		if err != nil {
 			return nil, err
 		}
@@ -50,7 +54,7 @@ func JsonReaderToMap(rdr io.Reader) (map[string]interface{},error) {
 			}
 		}
 		if inJson {
-			jb = append(jb,bval...)
+			jb = append(jb, bval...)
 			if parenCnt == 0 {
 				break
 			}
@@ -58,7 +62,7 @@ func JsonReaderToMap(rdr io.Reader) (map[string]interface{},error) {
 	}
 
 	// Unmarshal the 'presumed' JSON string
-	val := make(map[string]interface{},0)
-	err := json.Unmarshal(jb,&val)
+	val := make(map[string]interface{}, 0)
+	err := json.Unmarshal(jb, &val)
 	return val, err
 }
