@@ -4,6 +4,7 @@ package j2x
 
 import (
 	"encoding/json"
+	"errors"
 	"io"
 )
 
@@ -53,6 +54,9 @@ func getJson(rdr io.Reader) ([]byte, error) {
 	for {
 		_, err := rdr.Read(bval)
 		if err != nil {
+			if err == io.EOF && inJson && parenCnt > 0 {
+				return nil, errors.New("no closing } for JSON string: "+string(jb))
+			}
 			return nil, err
 		}
 		switch bval[0] {
@@ -64,6 +68,9 @@ func getJson(rdr io.Reader) ([]byte, error) {
 		case '}':
 			if !inQuote {
 				parenCnt--
+			}
+			if parenCnt < 0 {
+				return nil, errors.New("closing } without opening {: "+string(jb))
 			}
 		case '"':
 			if inQuote {
@@ -83,5 +90,6 @@ func getJson(rdr io.Reader) ([]byte, error) {
 			}
 		}
 	}
+
 	return jb, nil
 }

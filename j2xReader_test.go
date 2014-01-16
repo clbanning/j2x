@@ -71,3 +71,29 @@ func TestReaderToStruct(t *testing.T) {
 		fmt.Println("v:",v)
 	}
 }
+
+func TestInputError(t *testing.T) {
+	data := []byte(`"Key1":"value1", "Key2":3.14159625, "Key3":true},
+						 {"Key1":"value2", "Key2":31.4159625, "Key3":false`)
+
+	type tstruct struct {
+		Key1 string
+		Key2 float64
+		Key3 bool
+	}
+
+	fmt.Println("\ndata for structs:", string(data))
+	r := bytes.NewReader(data)
+	for {
+		v := new(tstruct)
+		err := JsonReaderToStruct(r,v)
+		if err != nil {
+			if err == io.EOF {
+				break
+			}
+			fmt.Println("err:",err.Error())
+		}
+		fmt.Println("v:",v)
+	}
+}
+
