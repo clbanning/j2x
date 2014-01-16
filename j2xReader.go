@@ -17,7 +17,7 @@ func JsonReaderToDoc(rdr io.Reader, rootTag ...string) (string, error) {
 	return MapToDoc(m, rootTag...)
 }
 
-// JsonReaderToDoc wraps json.Unmarshal() with an io.Reader.
+// JsonReaderToMap wraps json.Unmarshal() with an io.Reader.
 // Repeated calls will bulk process the stream of anonymous JSON strings.
 func JsonReaderToMap(rdr io.Reader) (map[string]interface{}, error) {
 	bval := make([]byte, 1)
