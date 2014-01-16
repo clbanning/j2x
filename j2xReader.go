@@ -28,7 +28,7 @@ func JsonReaderToMap(rdr io.Reader) (map[string]interface{}, error) {
 
 	// Unmarshal the 'presumed' JSON string
 	val := make(map[string]interface{}, 0)
-	err = json.Unmarshal(jb, &val)
+	err = json.Unmarshal(*jb, &val)
 	return val, err
 }
 
@@ -39,11 +39,11 @@ func JsonReaderToStruct(rdr io.Reader, structPtr interface{}) error {
 		return err
 	}
 
-	err = json.Unmarshal(jb,structPtr)
+	err = json.Unmarshal(*jb,structPtr)
 	return err
 }
 
-func getJson(rdr io.Reader) ([]byte, error) {
+func getJson(rdr io.Reader) (*[]byte, error) {
 	bval := make([]byte, 1)
 	jb := make([]byte, 0)
 	var inQuote, inJson bool
@@ -91,5 +91,5 @@ func getJson(rdr io.Reader) ([]byte, error) {
 		}
 	}
 
-	return jb, nil
+	return &jb, nil
 }
