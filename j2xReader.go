@@ -20,6 +20,29 @@ func JsonReaderToDoc(rdr io.Reader, rootTag ...string) (string, error) {
 // JsonReaderToMap wraps json.Unmarshal() with an io.Reader.
 // Repeated calls will bulk process the stream of anonymous JSON strings.
 func JsonReaderToMap(rdr io.Reader) (map[string]interface{}, error) {
+	jb, err := getJson(rdr)
+	if err != nil {
+		return nil, err
+	}
+
+	// Unmarshal the 'presumed' JSON string
+	val := make(map[string]interface{}, 0)
+	err = json.Unmarshal(jb, &val)
+	return val, err
+}
+
+// JsonReaderToStruct - wraps json.Unmarshal to load instances of a structure.
+func JsonReaderToStruct(rdr io.Reader, structPtr interface{}) error {
+	jb, err := getJson(rdr)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(jb,structPtr)
+	return err
+}
+
+func getJson(rdr io.Reader) ([]byte, error) {
 	bval := make([]byte, 1)
 	jb := make([]byte, 0)
 	var inQuote, inJson bool
@@ -60,9 +83,5 @@ func JsonReaderToMap(rdr io.Reader) (map[string]interface{}, error) {
 			}
 		}
 	}
-
-	// Unmarshal the 'presumed' JSON string
-	val := make(map[string]interface{}, 0)
-	err := json.Unmarshal(jb, &val)
-	return val, err
+	return jb, nil
 }
