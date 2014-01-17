@@ -21,7 +21,7 @@ func TestReader(t *testing.T) {
 		fmt.Println("\ndata:",i,"string:",string(data[i]))
 		r := bytes.NewReader(data[i])
 		for {
-			m, err := JsonReaderToMap(r)
+			m, jb, err := JsonReaderToMap(r)
 			if err != nil {
 				if err == io.EOF {
 					break
@@ -29,12 +29,13 @@ func TestReader(t *testing.T) {
 				t.Error("data:",i,"err:",err.Error())
 				continue
 			}
-			fmt.Println("data:",i,"map",m)
+			fmt.Println("data:",i,"jb:",string(*jb),"map",m)
 		}
+
 		fmt.Println("\ndata:",i,"string:",string(data[i]))
 		r = bytes.NewReader(data[i])
 		for {
-			d, err := JsonReaderToDoc(r)
+			d, jb, err := JsonReaderToDoc(r)
 			if err != nil {
 				if err == io.EOF {
 					break
@@ -42,7 +43,7 @@ func TestReader(t *testing.T) {
 				t.Error("data:",i,"err:",err.Error())
 				continue
 			}
-			fmt.Println("data:",i,"doc",d)
+			fmt.Println("data:",i,"jb:",string(*jb),"doc",d)
 		}
 	}
 }
@@ -61,14 +62,14 @@ func TestReaderToStruct(t *testing.T) {
 	r := bytes.NewReader(data)
 	for {
 		v := new(tstruct)
-		err := JsonReaderToStruct(r,v)
+		jb, err := JsonReaderToStruct(r,v)
 		if err != nil {
 			if err == io.EOF {
 				break
 			}
 			t.Error("err:",err.Error())
 		}
-		fmt.Println("v:",v)
+		fmt.Println("jb:",string(*jb),"v:",v)
 	}
 }
 
@@ -86,7 +87,7 @@ func TestInputError(t *testing.T) {
 	r := bytes.NewReader(data)
 	for {
 		v := new(tstruct)
-		err := JsonReaderToStruct(r,v)
+		_, err := JsonReaderToStruct(r,v)
 		if err != nil {
 			if err == io.EOF {
 				break

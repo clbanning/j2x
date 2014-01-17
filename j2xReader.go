@@ -10,37 +10,38 @@ import (
 
 // JsonReaderToDoc implements JsonToDoc() by wrapping MapToDoc() with an io.Reader.
 // Repeated calls will bulk process the stream of anonymous JSON strings.
-func JsonReaderToDoc(rdr io.Reader, rootTag ...string) (string, error) {
-	m, err := JsonReaderToMap(rdr)
+func JsonReaderToDoc(rdr io.Reader, rootTag ...string) (string, *[]byte, error) {
+	m, jb, err := JsonReaderToMap(rdr)
 	if err != nil {
-		return "", err
+		return "", jb, err
 	}
-	return MapToDoc(m, rootTag...)
+	doc, derr :=  MapToDoc(m, rootTag...)
+	return doc, jb, derr
 }
 
 // JsonReaderToMap wraps json.Unmarshal() with an io.Reader.
 // Repeated calls will bulk process the stream of anonymous JSON strings.
-func JsonReaderToMap(rdr io.Reader) (map[string]interface{}, error) {
+func JsonReaderToMap(rdr io.Reader) (map[string]interface{}, *[]byte, error) {
 	jb, err := getJson(rdr)
 	if err != nil {
-		return nil, err
+		return nil, jb, err
 	}
 
 	// Unmarshal the 'presumed' JSON string
 	val := make(map[string]interface{}, 0)
 	err = json.Unmarshal(*jb, &val)
-	return val, err
+	return val, jb, err
 }
 
 // JsonReaderToStruct - wraps json.Unmarshal to load instances of a structure.
-func JsonReaderToStruct(rdr io.Reader, structPtr interface{}) error {
+func JsonReaderToStruct(rdr io.Reader, structPtr interface{}) (*[]byte, error) {
 	jb, err := getJson(rdr)
 	if err != nil {
-		return err
+		return jb, err
 	}
 
 	err = json.Unmarshal(*jb,structPtr)
-	return err
+	return jb, err
 }
 
 func getJson(rdr io.Reader) (*[]byte, error) {
