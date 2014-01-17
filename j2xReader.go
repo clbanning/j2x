@@ -10,6 +10,7 @@ import (
 
 // JsonReaderToDoc implements JsonToDoc() by wrapping MapToDoc() with an io.Reader.
 // Repeated calls will bulk process the stream of anonymous JSON strings.
+// The function returns: XML string, pointer to source JSON value, error.
 func JsonReaderToDoc(rdr io.Reader, rootTag ...string) (string, *[]byte, error) {
 	m, jb, err := JsonReaderToMap(rdr)
 	if err != nil {
@@ -21,6 +22,7 @@ func JsonReaderToDoc(rdr io.Reader, rootTag ...string) (string, *[]byte, error) 
 
 // JsonReaderToMap wraps json.Unmarshal() with an io.Reader.
 // Repeated calls will bulk process the stream of anonymous JSON strings.
+// The function returns: map[string]interface{}, pointer to source JSON value, error.
 func JsonReaderToMap(rdr io.Reader) (map[string]interface{}, *[]byte, error) {
 	jb, err := getJson(rdr)
 	if err != nil {
@@ -34,6 +36,7 @@ func JsonReaderToMap(rdr io.Reader) (map[string]interface{}, *[]byte, error) {
 }
 
 // JsonReaderToStruct - wraps json.Unmarshal to load instances of a structure.
+// The function returns: pointer to source JSON value, error - structPtr holds the data.
 func JsonReaderToStruct(rdr io.Reader, structPtr interface{}) (*[]byte, error) {
 	jb, err := getJson(rdr)
 	if err != nil {
