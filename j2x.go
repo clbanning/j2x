@@ -1,5 +1,4 @@
-// j2x package - mirror of x2j package
-//	Marshal XML docs from arbitrary JSON string and map[string]interface{} variables.
+// Mirror of x2j package. Marshal XML docs from JSON string and map[string]interface{} variables.
 // Copyright 2013 Charles Banning. All rights reserved.
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file
