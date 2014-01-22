@@ -2,6 +2,10 @@ j2x.go - Encode arbitrary JSON strings or map[string]interface{} values as XML.
 
 ANNOUNCEMENTS
 
+01/22/14
+
+Enable Go XML package encoding of empty elements - <tag ...></tag> instead of <tag .../>.
+
 01/16/14
 
 Included our io.Reader wrapper for bulk processing JSON strings to map[string]interface{}

@@ -1,4 +1,5 @@
-// Mirror of x2j package. Marshal XML docs from JSON string and map[string]interface{} variables.
+// j2x package - mirror of x2j package
+//	Marshal XML docs from arbitrary JSON string and map[string]interface{} variables.
 // Copyright 2013 Charles Banning. All rights reserved.
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file
@@ -35,6 +36,18 @@ import (
 const (
 	DefaultRootTag = "doc"
 )
+
+var useGoXmlEmptyElemSyntax bool
+
+// UseGoXmlEmptyElemSyntax() - <tag ...></tag> rather than <tag .../>
+func UseGoXmlEmptyElemSyntax() {
+	useGoXmlEmptyElemSyntax = true
+}
+
+// UseJ2xEmptyElemSyntax() - <tag .../> rather than <tag ...></tag>
+func UseJ2xEmptyElemSyntax() {
+	useGoXmlEmptyElemSyntax = false
+}
 
 // Extends xml.Marshal() to handle JSON and map[string]interface{} types.
 //	This is the inverse of x2j.Unmarshal().
@@ -179,6 +192,8 @@ func mapToDoc(s *string, key string, value interface{}) error {
 
 	if endTag {
 		*s += "</" + key + ">"
+	} else if useGoXmlEmptyElemSyntax {
+		*s += "></" + key + ">"
 	} else {
 		*s += "/>"
 	}

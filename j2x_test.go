@@ -228,3 +228,23 @@ func TestByteArrayAttr(t *testing.T) {
 	}
 	fmt.Println("v:",string(v))
 }
+
+func TestEmptyElementSyntax( t *testing.T) {
+	var m = map[string]interface{}{ "tag1":nil, "tag2":2 }
+
+	fmt.Println("\nTestEmptyElementSyntax ... useGoXmlSyntax")
+	UseGoXmlEmptyElemSyntax()
+	v, err := Marshal(m)
+	if err != nil {
+		fmt.Println("err:", err.Error())
+	}
+	fmt.Println("v:",string(v))
+
+	fmt.Println("\nTestEmptyElementSyntax ... useJ2xSyntax")
+	UseJ2xEmptyElemSyntax()
+	v, err = Marshal(m)
+	if err != nil {
+		fmt.Println("err:", err.Error())
+	}
+	fmt.Println("v:",string(v))
+}
