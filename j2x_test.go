@@ -9,15 +9,15 @@ import (
 func TestSimple(t *testing.T) {
 	var s = `{ "key":"value" }`
 
-	fmt.Println("\nTestSimple ... JsonToDoc:",s)
-	v, err := JsonToDoc(s)
+	fmt.Println("\nTestSimple ... JsonToXml:",s)
+	v, err := JsonToXml(s)
 	if err != nil {
 		fmt.Println("err:",err.Error())
 	}
 	fmt.Println("v:",v)
 
-	fmt.Println("\nTestSimple ... JsonToDoc, rootTag: zoom")
-	v, err = JsonToDoc(s,"zoom")
+	fmt.Println("\nTestSimple ... JsonToXml, rootTag: zoom")
+	v, err = JsonToXml(s,"zoom")
 	if err != nil {
 		fmt.Println("err:",err.Error())
 	}
@@ -25,8 +25,8 @@ func TestSimple(t *testing.T) {
 
 	s = `{ "one":1, "two":1.999, "3":"three", "four":false }`
 
-	fmt.Println("\nTestSimple ... JsonToDoc:",s)
-	v, err = JsonToDoc(s)
+	fmt.Println("\nTestSimple ... JsonToXml:",s)
+	v, err = JsonToXml(s)
 	if err != nil {
 		fmt.Println("err:",err.Error())
 	}
@@ -36,8 +36,8 @@ func TestSimple(t *testing.T) {
 func TestNotSoSimple(t *testing.T) {
 	var s = `{ "json":{ "one":1, "pi":3.1415962535, "bool":true, "jsonJR":{ "key":"value" } } }`
 
-	fmt.Println("\nTestNotSoSimple ... JsonToDoc:",s)
-	v, err := JsonToDoc(s)
+	fmt.Println("\nTestNotSoSimple ... JsonToXml:",s)
+	v, err := JsonToXml(s)
 	if err != nil {
 		fmt.Println("err:",err.Error())
 	}
@@ -45,8 +45,8 @@ func TestNotSoSimple(t *testing.T) {
 
 	s = `{ "json":[ "one", 3.1415962535, true, { "key":"value" } ] }`
 
-	fmt.Println("\nTestNotSoSimple ... JsonToDoc:",s)
-	v, err = JsonToDoc(s)
+	fmt.Println("\nTestNotSoSimple ... JsonToXml:",s)
+	v, err = JsonToXml(s)
 	if err != nil {
 		fmt.Println("err:",err.Error())
 	}
@@ -56,8 +56,8 @@ func TestNotSoSimple(t *testing.T) {
 func TestAttr(t *testing.T) {
 	var s = `{ "json":{ "-one":1, "-pi":3.1415962535, "-bool":true, "jsonJR":{ "-key":"value" } } }`
 
-	fmt.Println("\nTestAttr ... JsonToDoc:",s)
-	v, err := JsonToDoc(s)
+	fmt.Println("\nTestAttr ... JsonToXml:",s)
+	v, err := JsonToXml(s)
 	if err != nil {
 		fmt.Println("err:",err.Error())
 	}
@@ -66,7 +66,7 @@ func TestAttr(t *testing.T) {
 	s = `{ "json":{ "-one":1, "-pi":3.1415962535, "-bool":true, "jsonJR":{ "-attr":"value", "#text":"value" } } }`
 
 	fmt.Println("\nTestAttr ... #test:",s)
-	v, err = JsonToDoc(s)
+	v, err = JsonToXml(s)
 	if err != nil {
 		fmt.Println("err:",err.Error())
 	}
@@ -75,7 +75,7 @@ func TestAttr(t *testing.T) {
 	s = `{ "json":[ "one", 3.1415962535, true, { "-key":"value" } ] }`
 
 	fmt.Println("\nTestAttr ... list:",s)
-	v, err = JsonToDoc(s)
+	v, err = JsonToXml(s)
 	if err != nil {
 		fmt.Println("err:",err.Error())
 	}
@@ -84,7 +84,7 @@ func TestAttr(t *testing.T) {
 	s = `{ "json":[ "one", 3.1415962535, true, { "-key":"value", "#text":"Now is the time..." } ] }`
 
 	fmt.Println("\nTestAttr ... #text:",s)
-	v, err = JsonToDoc(s)
+	v, err = JsonToXml(s)
 	if err != nil {
 		fmt.Println("err:",err.Error())
 	}
@@ -109,8 +109,8 @@ func TestGoofy(t *testing.T) {
 	m["byteVal"] = interface{}([]byte(`the aid of their country`))
 	m["nilVal"] = interface{}(nil)
 
-	fmt.Println("\nTestGoofy ... MapToDoc:",m)
-	v, _ := MapToDoc(m)
+	fmt.Println("\nTestGoofy ... MapToXml:",m)
+	v, _ := MapToXml(m)
 	fmt.Println("v:",v)
 
 	type goofier struct {
@@ -124,8 +124,8 @@ func TestGoofy(t *testing.T) {
 	gg.N = nil
 	m["goofierVal"] = interface{}(gg)
 
-	fmt.Println("\nTestGoofier ... MapToDoc:",m)
-	v, _ = MapToDoc(m)
+	fmt.Println("\nTestGoofier ... MapToXml:",m)
+	v, _ = MapToXml(m)
 	fmt.Println("v:",v)
 }
 

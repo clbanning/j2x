@@ -8,15 +8,15 @@ import (
 	"io"
 )
 
-// JsonReaderToDoc implements JsonToDoc() by wrapping MapToDoc() with an io.Reader.
+// JsonReaderToXml implements JsonToXml() by wrapping MapToXml() with an io.Reader.
 // Repeated calls will bulk process the stream of anonymous JSON strings.
 // The function returns: XML string, pointer to source JSON value, error.
-func JsonReaderToDoc(rdr io.Reader, rootTag ...string) (string, *[]byte, error) {
+func JsonReaderToXml(rdr io.Reader, rootTag ...string) (string, *[]byte, error) {
 	m, jb, err := JsonReaderToMap(rdr)
 	if err != nil {
 		return "", jb, err
 	}
-	doc, derr :=  MapToDoc(m, rootTag...)
+	doc, derr :=  MapToXml(m, rootTag...)
 	return doc, jb, derr
 }
 

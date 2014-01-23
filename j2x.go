@@ -3,7 +3,7 @@
 // Copyright 2013 Charles Banning. All rights reserved.
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file
-/*	Marshal dynamic / arbitrary XML docs from arbitrary JSON string and map[string]interface{} variables.
+/*	Marshal dynamic / arbitrary XML docs from arbitrary JSON string and map[string]interface{} values.
 
 	Compliments the x2j package functions.
 
@@ -54,28 +54,28 @@ func UseJ2xEmptyElemSyntax() {
 //	Strings are interpreted as JSON strings; use xml.Marshal() to marshal
 //	a string as "<string>...</string>" - the standard package handling.
 //	Follows xml.Marshal handling of types except for string and map[string]interface{}
-//	values. For more generalized marshal'ing use MapToDoc().
-//	See MapToDoc() for encoding rules.
+//	values. For more generalized marshal'ing use MapToXml().
+//	See MapToXml() for encoding rules.
 func Marshal(v interface{}, rootTag ...string) ([]byte, error) {
 	switch v.(type) {
 	case string:
-		xmlString, err := JsonToDoc(v.(string), rootTag...)
+		xmlString, err := JsonToXml(v.(string), rootTag...)
 		return []byte(xmlString), err
 	case map[string]interface{}:
-		xmlString, err := MapToDoc(v.(map[string]interface{}), rootTag...)
+		xmlString, err := MapToXml(v.(map[string]interface{}), rootTag...)
 		return []byte(xmlString), err
 	}
 	return xml.Marshal(v)
 }
 
 // Encode a JSON string as XML.  The inverse of x2j.DocToJson().
-//	See MapToDoc() for encoding rules.
-func JsonToDoc(jsonString string, rootTag ...string) (string, error) {
+//	See MapToXml() for encoding rules.
+func JsonToXml(jsonString string, rootTag ...string) (string, error) {
 	m := make(map[string]interface{}, 0)
 	if err := json.Unmarshal([]byte(jsonString), &m); err != nil {
 		return "", err
 	}
-	return MapToDoc(m, rootTag...)
+	return MapToXml(m, rootTag...)
 }
 
 // Encode a map[string]interface{} variable as XML.  The inverse of x2j.DocToMap().
@@ -91,29 +91,29 @@ func JsonToDoc(jsonString string, rootTag ...string) (string, error) {
 //    - Elements with only attribute values or are null are terminated using "/>".
 //    - If len(m) == 1 and no rootTag is provided, then the map key is used as the root tag.
 //      Thus, `{ "key":"value" }` encodes as `<key>value</key>`.
-func MapToDoc(m map[string]interface{}, rootTag ...string) (string, error) {
+func MapToXml(m map[string]interface{}, rootTag ...string) (string, error) {
 	var err error
 	s := new(string)
 
 	if len(m) == 1 && len(rootTag) == 0 {
 		for key, value := range m {
 			if _, ok := value.([]interface{}); ok {
-				err = mapToDoc(s, DefaultRootTag, m)
+				err = mapToXml(s, DefaultRootTag, m)
 			} else {
-				err = mapToDoc(s, key, value)
+				err = mapToXml(s, key, value)
 			}
 		}
 	} else if len(rootTag) == 1 {
-		err = mapToDoc(s, rootTag[0], m)
+		err = mapToXml(s, rootTag[0], m)
 	} else {
-		err = mapToDoc(s, DefaultRootTag, m)
+		err = mapToXml(s, DefaultRootTag, m)
 	}
 	return *s, err
 }
 
 // where the work actually happens
 // returns an error if an attribute is not atomic
-func mapToDoc(s *string, key string, value interface{}) error {
+func mapToXml(s *string, key string, value interface{}) error {
 	var endTag bool
 
 	if _, ok := value.([]interface{}); !ok {
@@ -159,12 +159,12 @@ func mapToDoc(s *string, key string, value interface{}) error {
 			if k[:1] == "-" {
 				continue
 			}
-			mapToDoc(s, k, v)
+			mapToXml(s, k, v)
 		}
 		endTag = true
 	case []interface{}:
 		for _, v := range value.([]interface{}) {
-			mapToDoc(s, key, v)
+			mapToXml(s, key, v)
 		}
 		return nil
 	case nil:

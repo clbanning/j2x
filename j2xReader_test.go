@@ -35,7 +35,7 @@ func TestReader(t *testing.T) {
 		fmt.Println("\ndata:",i,"string:",string(data[i]))
 		r = bytes.NewReader(data[i])
 		for {
-			d, jb, err := JsonReaderToDoc(r)
+			d, jb, err := JsonReaderToXml(r)
 			if err != nil {
 				if err == io.EOF {
 					break

@@ -2,6 +2,13 @@ j2x.go - Encode arbitrary JSON strings or map[string]interface{} values as XML.
 
 ANNOUNCEMENTS
 
+01/23/14
+
+NOTICE: SOME FUNCTIONS HAVE BEEN RENAMED.  NOT BACKWARDS COMPATIBLE!
+
+Added io.Writer and io.ReadWriter functions.  Using the JsonToXMLReadWriter() function
+you can open a file/stream of JSON messages and write them out to a file/stream as XML.
+
 01/22/14
 
 Enable Go XML package encoding of empty elements - <tag ...></tag> instead of <tag .../>.
