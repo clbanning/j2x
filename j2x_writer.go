@@ -8,19 +8,19 @@ import (
 
 // JsonToXmlWriter decodes JSON string and writes it using io.Writer
 // Returns pointer to encoded XML, error.
-func JsonToXmlWriter(s string, wtr io.Writer) (*string, error) {
-	x, err := JsonToXml(s)
+func JsonToXmlWriter(b []byte, wtr io.Writer) (*[]byte, error) {
+	x, err := JsonToXml(b)
 	if err != nil {
 		return nil, err
 	}
 
-	_, err = wtr.Write([]byte(x))
+	_, err = wtr.Write(x)
 	return &x, err
 }
 
 // MapToXmlWriter encodes the map as XML and writes in on the io.Writer.
 // The function returns: pointer to encoded XML, error.
-func MapToXmlWriter(m map[string]interface{}, wtr io.Writer) (*string, error) {
+func MapToXmlWriter(m map[string]interface{}, wtr io.Writer) (*[]byte, error) {
 	x, err := MapToXml(m)
 	if err != nil {
 		return nil, err
@@ -32,7 +32,7 @@ func MapToXmlWriter(m map[string]interface{}, wtr io.Writer) (*string, error) {
 
 // Decodes next value from a JSON io.Reader and writes it using io.Writer
 // Returns: pointer to JSON, pointer to encoded XML, error.
-func JsonReaderToXmlWriter(rtr io.Reader, wtr io.Writer, rootTag ...string) (*string, *string, error) {
+func JsonReaderToXmlWriter(rtr io.Reader, wtr io.Writer, rootTag ...string) (*[]byte, *[]byte, error) {
 	rt := DefaultRootTag
 	if len(rootTag) == 1 {
 		rt = rootTag[0]
@@ -43,12 +43,7 @@ func JsonReaderToXmlWriter(rtr io.Reader, wtr io.Writer, rootTag ...string) (*st
 		return nil, nil, err
 	}
 
-	j := string(*jval)
-	if err != nil {
-		return &j, &doc, err
-	}
-
-	_, err = wtr.Write([]byte(doc))
-	return &j, &doc, err
+	_, err = wtr.Write(doc)
+	return jval, &doc, err
 }
 

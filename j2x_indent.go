@@ -52,28 +52,28 @@ func (p *pretty)Dedent() {
 func MarshalIndent(v interface{}, prefix, indent string, rootTag ...string) ([]byte, error) {
 	switch v.(type) {
 	case string:
-		xmlString, err := JsonToXmlIndent(v.(string), prefix, indent, rootTag...)
-		return []byte(xmlString), err
+		xmlString, err := JsonToXmlIndent([]byte(v.(string)), prefix, indent, rootTag...)
+		return xmlString, err
 	case map[string]interface{}:
 		xmlString, err := MapToXmlIndent(v.(map[string]interface{}), prefix, indent, rootTag...)
-		return []byte(xmlString), err
+		return xmlString, err
 	}
 	return xml.MarshalIndent(v, prefix, indent)
 }
 
 // Encode a JSON string as pretty XML string.
 //	See JsonToXml().
-func JsonToXmlIndent(jsonString string, prefix, indent string, rootTag ...string) (string, error) {
+func JsonToXmlIndent(jsonString []byte, prefix, indent string, rootTag ...string) ([]byte, error) {
 	m := make(map[string]interface{}, 0)
-	if err := json.Unmarshal([]byte(jsonString), &m); err != nil {
-		return "", err
+	if err := json.Unmarshal(jsonString, &m); err != nil {
+		return nil, err
 	}
 	return MapToXmlIndent(m, prefix, indent, rootTag...)
 }
 
 // Encode a map[string]interface{} variable as a pretty XML string.
 // See MapToXml().
-func MapToXmlIndent(m map[string]interface{}, prefix, indent string, rootTag ...string) (string, error) {
+func MapToXmlIndent(m map[string]interface{}, prefix, indent string, rootTag ...string) ([]byte, error) {
 	var err error
 	s := new(string)
 	p := new(pretty)
@@ -93,7 +93,7 @@ func MapToXmlIndent(m map[string]interface{}, prefix, indent string, rootTag ...
 	} else {
 		err = p.mapToXmlIndent(s, DefaultRootTag, m)
 	}
-	return *s, err
+	return []byte(*s), err
 }
 
 // where the work actually happens

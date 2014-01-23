@@ -1,5 +1,5 @@
 // j2x package - mirror of x2j package
-//	Marshal XML docs from arbitrary JSON string and map[string]interface{} variables.
+//	Marshal XML docs from arbitrary JSON and map[string]interface{} values.
 // Copyright 2013 Charles Banning. All rights reserved.
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file
@@ -59,21 +59,21 @@ func UseJ2xEmptyElemSyntax() {
 func Marshal(v interface{}, rootTag ...string) ([]byte, error) {
 	switch v.(type) {
 	case string:
-		xmlString, err := JsonToXml(v.(string), rootTag...)
-		return []byte(xmlString), err
+		xmlString, err := JsonToXml([]byte(v.(string)), rootTag...)
+		return xmlString, err
 	case map[string]interface{}:
 		xmlString, err := MapToXml(v.(map[string]interface{}), rootTag...)
-		return []byte(xmlString), err
+		return xmlString, err
 	}
 	return xml.Marshal(v)
 }
 
-// Encode a JSON string as XML.  The inverse of x2j.DocToJson().
+// Encode JSON value as XML.  The inverse of x2j.DocToJson().
 //	See MapToXml() for encoding rules.
-func JsonToXml(jsonString string, rootTag ...string) (string, error) {
+func JsonToXml(jsonString []byte, rootTag ...string) ([]byte, error) {
 	m := make(map[string]interface{}, 0)
-	if err := json.Unmarshal([]byte(jsonString), &m); err != nil {
-		return "", err
+	if err := json.Unmarshal(jsonString, &m); err != nil {
+		return nil, err
 	}
 	return MapToXml(m, rootTag...)
 }
@@ -91,7 +91,7 @@ func JsonToXml(jsonString string, rootTag ...string) (string, error) {
 //    - Elements with only attribute values or are null are terminated using "/>".
 //    - If len(m) == 1 and no rootTag is provided, then the map key is used as the root tag.
 //      Thus, `{ "key":"value" }` encodes as `<key>value</key>`.
-func MapToXml(m map[string]interface{}, rootTag ...string) (string, error) {
+func MapToXml(m map[string]interface{}, rootTag ...string) ([]byte, error) {
 	var err error
 	s := new(string)
 
@@ -108,7 +108,7 @@ func MapToXml(m map[string]interface{}, rootTag ...string) (string, error) {
 	} else {
 		err = mapToXml(s, DefaultRootTag, m)
 	}
-	return *s, err
+	return []byte(*s), err
 }
 
 // where the work actually happens

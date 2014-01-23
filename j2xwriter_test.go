@@ -34,7 +34,7 @@ func TestWriter(t *testing.T) {
 			fmt.Println("data:",i,"jb:",string(*jb),"map",m)
 
 			ps, err := MapToXmlWriter(m,w)
-			fmt.Println("*ps:",*ps)
+			fmt.Println("*ps:",string(*ps))
 			s := make([]byte,w.Len())
 			_, err = w.Read(s)
 			fmt.Println("s  :",string(s))
@@ -66,8 +66,8 @@ func TestReadWriter(t *testing.T) {
 				t.Error("data:",i,"err:",err.Error())
 				continue
 			}
-			fmt.Println("j:",*j)
-			fmt.Println("x:",*x)
+			fmt.Println("j:",string(*j))
+			fmt.Println("x:",string(*x))
 			s := make([]byte,w.Len())
 			_, err = w.Read(s)
 			fmt.Println("s:",string(s))

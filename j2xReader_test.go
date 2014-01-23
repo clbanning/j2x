@@ -43,7 +43,7 @@ func TestReader(t *testing.T) {
 				t.Error("data:",i,"err:",err.Error())
 				continue
 			}
-			fmt.Println("data:",i,"jb:",string(*jb),"doc",d)
+			fmt.Println("data:",i,"jb:",string(*jb),"doc",string(d))
 		}
 	}
 }

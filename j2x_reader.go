@@ -11,10 +11,10 @@ import (
 // JsonReaderToXml implements JsonToXml() by wrapping MapToXml() with an io.Reader.
 // Repeated calls will bulk process the stream of anonymous JSON strings.
 // The function returns: XML string, pointer to source JSON value, error.
-func JsonReaderToXml(rdr io.Reader, rootTag ...string) (string, *[]byte, error) {
+func JsonReaderToXml(rdr io.Reader, rootTag ...string) ([]byte, *[]byte, error) {
 	m, jb, err := JsonReaderToMap(rdr)
 	if err != nil {
-		return "", jb, err
+		return nil, jb, err
 	}
 	doc, derr :=  MapToXml(m, rootTag...)
 	return doc, jb, derr
