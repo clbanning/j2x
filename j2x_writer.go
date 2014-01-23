@@ -32,13 +32,13 @@ func MapToXmlWriter(m map[string]interface{}, wtr io.Writer) (*[]byte, error) {
 
 // Decodes next value from a JSON io.Reader and writes it using io.Writer
 // Returns: pointer to JSON, pointer to encoded XML, error.
-func JsonReaderToXmlWriter(rtr io.Reader, wtr io.Writer, rootTag ...string) (*[]byte, *[]byte, error) {
+func JsonReaderToXmlWriter(rdr io.Reader, wtr io.Writer, rootTag ...string) (*[]byte, *[]byte, error) {
 	rt := DefaultRootTag
 	if len(rootTag) == 1 {
 		rt = rootTag[0]
 	}
 
-	doc, jval, err := JsonReaderToXml(rtr,rt)
+	doc, jval, err := JsonReaderToXml(rdr,rt)
 	if err != nil {
 		return nil, nil, err
 	}
