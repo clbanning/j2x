@@ -6,7 +6,7 @@ ANNOUNCEMENTS
 
 NOTICE: FUNCTIONS HAVE BEEN RENAMED AND ARG/RETURN TYPES CHANGED. NOT BACKWARDS COMPATIBLE!
 
-Added io.Writer and io.ReadWriter functions.  Using the JsonToXMLReadWriter() function
+Added io.Writer and io.ReadWriter functions.  With the JsonReaderToXmlWriter() function
 you can open a file/stream of JSON messages and write them out to a file/stream as XML.
 
 01/22/14
