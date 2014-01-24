@@ -26,7 +26,7 @@ func MapToXmlWriter(m map[string]interface{}, wtr io.Writer) (*[]byte, error) {
 		return nil, err
 	}
 
-	_, err = wtr.Write([]byte(x))
+	_, err = wtr.Write(x)
 	return &x, err
 }
 
