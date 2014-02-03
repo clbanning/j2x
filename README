@@ -1,5 +1,12 @@
 j2x.go - Encode arbitrary JSON strings or map[string]interface{} values as XML.
 
+NOTICE:
+
+AS OF 3-FEB-2014 THE j2x PACKAGE IS NO LONGER SUPPORTED.
+
+IT HAS BEEN DEPRECATED IN FAVOR OF mxj: http://github.com/clbanning/mxj.  
+(j2x can be implemented by uncommenting the functions in the j2x.go included with the mxj package.)
+
 ANNOUNCEMENTS
 
 01/23/14
