@@ -5,6 +5,8 @@
 // license that can be found in the LICENSE file
 /*	Marshal dynamic / arbitrary XML docs from arbitrary JSON string and map[string]interface{} values.
 
+	NOTICE: 03-Feb-2014, package deprecated.  Please see http://github.com/clbanning/mxj.
+
 	Compliments the x2j package functions.
 
 	Uses x2j conventions:
