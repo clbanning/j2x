@@ -25,7 +25,9 @@
 	encoding/xml package encodes them as "<tag ...></tag>".  If you're marshaling a map with structure values
 	and want a consistent syntax, use the xml_marshal hack of the standard library that conforms encoding/xml
 	to the j2x convention.
+
 */
+// Deprecated: Use github.com/clbanning/mxj
 package j2x
 
 import (
